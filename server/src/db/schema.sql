@@ -9,10 +9,15 @@ CREATE TABLE IF NOT EXISTS users (
   created_at   TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS subjects (
+  name         TEXT PRIMARY KEY,
+  question_count INTEGER DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS user_subjects (
   user_id  INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  subject  TEXT NOT NULL,
-  role     TEXT NOT NULL DEFAULT 'studying',
+  subject  TEXT NOT NULL REFERENCES subjects(name) ON DELETE CASCADE,
+  role     TEXT NOT NULL DEFAULT 'studying' CHECK(role IN ('studying','mastered')),
   PRIMARY KEY (user_id, subject, role)
 );
 
@@ -21,7 +26,7 @@ CREATE TABLE IF NOT EXISTS questions (
   author_id  INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   title      TEXT NOT NULL,
   body       TEXT NOT NULL,
-  subject    TEXT NOT NULL,
+  subject    TEXT NOT NULL REFERENCES subjects(name) ON DELETE CASCADE,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
